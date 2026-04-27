@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DataCollect INF232</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-logo">DataCollect <span>INF232</span></div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="showPage('formulaire')">Formulaire</button>
+      <button class="nav-btn" onclick="showPage('analyse')">Analyse</button>
+      <button class="nav-btn" onclick="showPage('donnees')">Données</button>
+    </div>
+  </nav>
+
+  <!-- PAGE FORMULAIRE -->
+  <div id="page-formulaire" class="page active">
+    <div class="hero">
+      <div class="hero-tag">TP INF232 EC2</div>
+      <h1>Collecte de <em>données</em><br/>en ligne</h1>
+      <p class="hero-sub">Remplissez le formulaire ci-dessous. Vos réponses alimentent l'analyse descriptive en temps réel.</p>
+    </div>
+
+    <div class="form-card">
+      <form id="mainForm">
+        <div class="form-grid">
+          <div class="field">
+            <label>Nom complet *</label>
+            <input type="text" name="nom" placeholder="Ex: Jean Dupont" required/>
+          </div>
+          <div class="field">
+            <label>Âge *</label>
+            <input type="number" name="age" placeholder="Ex: 22" min="10" max="100" required/>
+          </div>
+          <div class="field">
+            <label>Genre *</label>
+            <select name="genre" required>
+              <option value="">— Sélectionner —</option>
+              <option value="Masculin">Masculin</option>
+              <option value="Féminin">Féminin</option>
+              <option value="Autre">Autre / Non précisé</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Niveau d'études *</label>
+            <select name="niveau_etude" required>
+              <option value="">— Sélectionner —</option>
+              <option value="Primaire">Primaire</option>
+              <option value="Secondaire">Secondaire</option>
+              <option value="Licence">Licence (L1-L3)</option>
+              <option value="Master">Master (M1-M2)</option>
+              <option value="Doctorat">Doctorat</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Secteur d'activité *</label>
+            <select name="secteur" required>
+              <option value="">— Sélectionner —</option>
+              <option value="Informatique">Informatique / Tech</option>
+              <option value="Santé">Santé</option>
+              <option value="Éducation">Éducation</option>
+              <option value="Commerce">Commerce</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Finance">Finance / Banque</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Revenu mensuel (FCFA)</label>
+            <input type="number" name="revenu_mensuel" placeholder="Ex: 150000" min="0"/>
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>Satisfaction générale * <span class="sat-val" id="satLabel">3 / 5</span></label>
+          <div class="slider-row">
+            <span>1</span>
+            <input type="range" name="satisfaction" min="1" max="5" value="3"
+              oninput="document.getElementById('satLabel').textContent = this.value + ' / 5'"
+              required/>
+            <span>5</span>
+          </div>
+          <div class="sat-desc">
+            <span>Très insatisfait</span><span>Très satisfait</span>
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>Commentaire libre</label>
+          <textarea name="commentaire" placeholder="Partagez votre avis, suggestion ou observation..." rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Soumettre ma réponse →</button>
+      </form>
+      <div id="formMsg" class="form-msg"></div>
+    </div>
+  </div>
+
+  <!-- PAGE ANALYSE -->
+  <div id="page-analyse" class="page">
+    <div class="hero small">
+      <h2>Analyse <em>descriptive</em></h2>
+      <p class="hero-sub">Statistiques calculées en temps réel sur toutes les réponses collectées.</p>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card accent">
+        <div class="stat-label">Total réponses</div>
+        <div class="stat-val" id="statTotal">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Âge moyen</div>
+        <div class="stat-val" id="statAge">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Satisfaction moyenne</div>
+        <div class="stat-val" id="statSat">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Revenu moyen</div>
+        <div class="stat-val" id="statRevenu">—</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <h3>Répartition par genre</h3>
+        <div id="chartGenre" class="bar-chart"></div>
+      </div>
+      <div class="chart-box">
+        <h3>Répartition par secteur</h3>
+        <div id="chartSecteur" class="bar-chart"></div>
+      </div>
+      <div class="chart-box">
+        <h3>Distribution de satisfaction</h3>
+        <div id="chartSat" class="bar-chart"></div>
+      </div>
+    </div>
+
+    <button class="btn-refresh" onclick="loadStats()">↻ Actualiser</button>
+  </div>
+
+  <!-- PAGE DONNÉES -->
+  <div id="page-donnees" class="page">
+    <div class="hero small">
+      <h2>Données <em>brutes</em></h2>
+      <p class="hero-sub">Toutes les réponses enregistrées dans la base de données SQLite.</p>
+    </div>
+    <div class="table-wrap">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>#</th><th>Nom</th><th>Âge</th><th>Genre</th>
+            <th>Niveau</th><th>Secteur</th><th>Revenu</th><th>Satisfaction</th><th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="9" style="text-align:center;padding:2rem;color:#888">Chargement...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
